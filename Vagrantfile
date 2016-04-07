@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 10000]
     end
-    # config.vm.provision "shell", inline: ". C:\\vagrant\\node-setup.bat | Write-Output"
+    config.vm.provision "shell", inline: ". C:\\vagrant\\node-setup.bat | Write-Output"
   end
 
 end

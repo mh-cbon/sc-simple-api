@@ -1,12 +1,15 @@
 {
   "name": "sc-simple-api",
   "version": "1.0.0",
-  "description": "",
+  "description": " Simple api for node to manage services via windows sc ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-windows": "sh ./mocha.sh"
   },
-  "keywords": [],
+  "keywords": [
+    "windows", "sc", "service"
+  ],
   "author": "mh-cbon <mh-cbon@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
