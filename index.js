@@ -1,4 +1,5 @@
 var spawn     = require('child_process').spawn;
+var path      = require('path')
 var split     = require('split')
 var through2  = require('through2')
 var spScQuery = require('./sp-scquery.js');
@@ -82,14 +83,14 @@ function SimpleScApi (version) {
     return c;
   }
 
-  this.describe = function (service, then) {
+  this.describe = function (serviceId, then) {
     var info = {}
     var that = this;
     return that.list({}, function (err, items) {
       if (err) return then(err);
-      if (!items[service]) return then('not found');
-      info = items[service];
-      that.qdescribe(service, function (err2, description) {
+      if (!items[serviceId]) return then('not found');
+      info = items[serviceId];
+      that.qdescribe(serviceId, function (err2, description) {
         if (err2) return then(err2)
         info.description = description;
         then(null, info);
@@ -97,17 +98,52 @@ function SimpleScApi (version) {
     })
   }
 
+  this.config = function (opts, then) {
+    var args = ['config', opts.id]
+    if (opts.type) {
+      if (typeof(opts.type) === "string") args = args.concat(["type=", opts.type])
+      else args = args.concat(["type=", opts.type[0], "type=", opts.type[1]])
+    }
+    if (opts.start) args = args.concat(["start=", opts.start])
+    if (opts.error) args = args.concat(["error=", opts.error])
+    if (opts.binpath) args = args.concat(["binpath=", opts.binpath])
+    if (opts.group) args = args.concat(["group=", opts.group])
+    if (opts.tag) args = args.concat(["tag=", opts.tag])
+    if (opts.depend) args = args.concat(["depend=", opts.depend])
+    if (opts.obj) args = args.concat(["obj=", opts.obj])
+    if (opts.displayname) args = args.concat(["displayname=", opts.displayname])
+    if (opts.password) args = args.concat(["password=", opts.password])
+
+    var c = spawn(scPath, args, {stdio: 'pipe'})
+
+    var data = '';
+    var hasFailed = false;
+    c.stdout.on('data', function (d) {
+      d = d.toString();
+      if (!hasFailed && d.match(/ChangeServiceConfig SUCCESS/)) {
+        hasFailed = false
+      } else if (!hasFailed && d.match(/ERROR:/)) {
+        hasFailed = true
+      }
+      data += d
+    });
+
+    c.on('close', function (code) {
+      then(hasFailed ? data : null)
+    });
+
+    c.on('error', then);
+
+    return c;
+  }
 
   this.start = function (serviceId, args, then) {
     var args = ['start', serviceId].concat(args)
 
     var c = spawn(scPath, args, {stdio: 'pipe'})
 
-    c.stdout.pipe(process.stdout);
-    c.stderr.pipe(process.stderr);
-
     c.on('close', function (code) {
-      then(code>0 ? 'got error' : '')
+      then(code>0 ? 'got error' : null)
     });
 
     c.on('error', then);
@@ -123,7 +159,7 @@ function SimpleScApi (version) {
     c.stderr.pipe(process.stderr);
 
     c.on('close', function (code) {
-      then(code>0 ? 'got error' : '')
+      then(code>0 ? 'got error' : null)
     });
 
     c.on('error', then);
@@ -138,8 +174,41 @@ function SimpleScApi (version) {
     })
   }
 
-  this.nssmInstall = function () {
-    throw "TDB :x"
+  this.nssmInstall = function (serviceId, binPath, strArgs, then) {
+    var nssmPath = path.join(__dirname, '..', 'utils', 'nssm-2.24', 'win64', 'nssm.exe')
+
+    var args = ['install', serviceId, binPath, strArgs]
+
+    var c = spawn(nssmPath, args, {stdio: 'pipe'})
+
+    var hasFailed = false;
+
+    var stdout = '';
+    c.stdout.on('data', function (d) {
+      stdout += d.toString() + ' ';
+    })
+    var stderr = '';
+    c.stderr.on('data', function (d) {
+      stderr += d.toString() + ' ';
+    })
+
+    c.on('close', function (code) {
+      if (stdout.match(/installed success/)) {
+        hasFailed = false;
+      }
+      // small subtility, stderr will print like this
+      // E\u0000r\u0000r\u0000o\u0000r\u0000 \u0000c\u0000r\u0000e\u0000
+      // so lets get ride of those NUL values
+      stderr = stderr.replace(/\u0000/g, '')
+      if (stderr.match(/Error\s+creating/i)) {
+        hasFailed = true
+      }
+      then(hasFailed ? stderr : null)
+    });
+
+    c.on('error', then);
+
+    return c;
   }
 
   this.install = function (opts, then) {
@@ -190,7 +259,7 @@ function SimpleScApi (version) {
     var hasFailed = false;
     c.stdout.on('data', function (d) {
       d = d.toString();
-      if (!hasFailed && d.match(/CreateService SUCCESS/)) {
+      if (!hasFailed && d.match(/DeleteService SUCCESS/)) {
         hasFailed = false
       } else if (!hasFailed && d.match(/FAILED\s+[0-9]+/)) {
         hasFailed = true
@@ -204,9 +273,11 @@ function SimpleScApi (version) {
 
     c.on('error', then);
 
+    c.stdout.pipe(process.stdout);
+    c.stderr.pipe(process.stderr);
+
     return c;
   }
-
 
 }
 

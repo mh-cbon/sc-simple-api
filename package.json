@@ -8,7 +8,7 @@
     "test-windows": "sh ./mocha.sh"
   },
   "keywords": [
-    "windows", "sc", "service"
+    "windows", "sc", "nssm", "service"
   ],
   "author": "mh-cbon <mh-cbon@users.noreply.github.com>",
   "license": "MIT",
