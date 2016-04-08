@@ -32,7 +32,6 @@ ssa.describe("serviceId", function (err, info) {
 
 // sc config fake type= service
 ssa.config('fake', {type: "service"}, function (err) {
-  (err===null).should.eql(true);
   err && console.error(err);
 })
 
@@ -50,31 +49,26 @@ ssa.install(service, function (err) {
 
 // nssm.exe serviceId C:\\nodejsx64\\node.exe C:\\vagrant\\utils\\fake-service.js
 ssa.nssmInstall('serviceId', 'C:\\nodejsx64\\node.exe', 'C:\\vagrant\\utils\\fake-service.js', function (err) {
-  (err===null).should.eql(false);
   err && console.error(err);
 })
 
 // sc start fake some= args
 ssa.start('fake', ["some=", "args"], function (err) {
-  (err===null).should.eql(true);
   err && console.error(err);
 })
 
 // sc stop fake + sc start fake some= args
 ssa.restart('fake', ["some=", "args"], function (err) {
-  (err===null).should.eql(true);
   err && console.error(err);
 })
 
 // sc stop fake
 ssa.stop('fake', function (err) {
-  (err===null).should.eql(true);
   err && console.error(err);
 })
 
 // sc delete fake
 ssa.uninstall('fake', function (err) {
-  (err===null).should.eql(true);
   err && console.error(err);
 })
 ```
