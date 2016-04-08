@@ -3,6 +3,7 @@ var path      = require('path')
 var split     = require('split')
 var through2  = require('through2')
 var spScQuery = require('./sp-scquery.js');
+var nssm      = require("@mh-cbon/nssm-prebuilt")
 
 function SimpleScApi (version) {
 
@@ -175,11 +176,10 @@ function SimpleScApi (version) {
   }
 
   this.nssmInstall = function (serviceId, binPath, strArgs, then) {
-    var nssmPath = path.join(__dirname, '..', 'utils', 'nssm-2.24', 'win64', 'nssm.exe')
 
     var args = ['install', serviceId, binPath, strArgs]
 
-    var c = spawn(nssmPath, args, {stdio: 'pipe'})
+    var c = spawn(nssm.path, args, {stdio: 'pipe'})
 
     var hasFailed = false;
 
