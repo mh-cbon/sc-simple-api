@@ -25,7 +25,7 @@ ssa.qdescribe("serviceId", function (err, info) {
   console.log(info)
 })
 
-// sc qdescribe serviceId + sc queryEx type= service
+// sc qdescribe serviceId + sc queryEx
 ssa.describe("serviceId", function (err, info) {
   console.log(info)
 })
