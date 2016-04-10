@@ -1,7 +1,7 @@
 {
   "name": "@mh-cbon/sc-simple-api",
   "version": "1.0.1",
-  "description": " Simple api for node to manage services via windows sc ",
+  "description": "Simple api for node to manage services via windows sc",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
