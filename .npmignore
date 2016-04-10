@@ -1,0 +1,9 @@
+/Vagrantfile
+/run-tests.bat
+/mocha.sh
+/node-setup.bat
+/utils/
+/test/
+/fixtures/
+/.vagrant/
+npm-debug.log
