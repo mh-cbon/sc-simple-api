@@ -1,6 +1,6 @@
 {
   "name": "sc-simple-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": " Simple api for node to manage services via windows sc ",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,10 @@
     "public": "npm publish --access=public"
   },
   "keywords": [
-    "windows", "sc", "nssm", "service"
+    "windows",
+    "sc",
+    "nssm",
+    "service"
   ],
   "author": "mh-cbon <mh-cbon@users.noreply.github.com>",
   "license": "MIT",
