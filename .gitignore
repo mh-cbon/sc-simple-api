@@ -1,3 +1,4 @@
 /node_modules/
 /.vagrant/
 /utils/nssm-2.24/
+npm-debug.log
