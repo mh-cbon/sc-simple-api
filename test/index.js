@@ -9,8 +9,8 @@ describe('simple sc api', function() {
   var ssa = new SimpleScApi()
   it('should list services', function(done) {
     ssa.list({}, function (err, items) {
-      (err===null).should.be.true;
-      ('WinRM' in items).should.be.true;
+      (err===null).should.eql(true);
+      ('WinRM' in items).should.eql(true);
       items['WinRM'].name.should.eql("WinRM")
       items['WinRM'].checkpoint.should.eql("0x0")
       items['WinRM'].display.should.eql('Windows Remote Management (WS-Management)')
@@ -21,7 +21,7 @@ describe('simple sc api', function() {
   });
   it('should properly fail to list services', function(done) {
     ssa.list({type: "NOT CORRECT"}, function (err, items) {
-      (err===null).should.be.false;
+      (err===null).should.eql(false);
       err.should.match(/ERROR:/)
       done();
     })

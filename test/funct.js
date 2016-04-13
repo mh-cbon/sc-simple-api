@@ -7,7 +7,7 @@ describe('launchd-simple-api userland', function() {
 
   it('should not list the fake service', function(done) {
     ssa.list({}, function (err, list) {
-      ('fake' in list).should.be.false;
+      ('fake' in list).should.eql(false);
       done();
     })
   });
@@ -16,13 +16,6 @@ describe('launchd-simple-api userland', function() {
     ssa.nssmInstall('fake', 'C:\\nodejsx64\\node.exe', 'C:\\vagrant\\utils\\fake-service.js', function (err) {
       (err===null).should.eql(true);
       err && console.error(err);
-      done();
-    })
-  });
-
-  it('should list the fake service', function(done) {
-    ssa.list({}, function (err, list) {
-      ('fake' in list).should.be.true;
       done();
     })
   });
@@ -37,7 +30,7 @@ describe('launchd-simple-api userland', function() {
 
   it('should list the fake service', function(done) {
     ssa.list({}, function (err, list) {
-      ('fake' in list).should.be.true;
+      ('fake' in list).should.eql(true);
       list['fake'].name.should.eql('fake');
       done();
     })
@@ -70,7 +63,7 @@ describe('launchd-simple-api userland', function() {
 
   it('should not list the fake service', function(done) {
     ssa.list({}, function (err, list) {
-      ('fake' in list).should.be.false;
+      ('fake' in list).should.eql(false);
       done();
     })
   });
