@@ -20,6 +20,14 @@ describe('launchd-simple-api userland', function() {
     })
   });
 
+  it.skip('should list the fake service', function(done) {
+    ssa.list({}, function (err, list) {
+      console.log(list['fake']);
+      ('fake' in list).should.eql(true);
+      done();
+    })
+  });
+
   it('should start the fake service', function(done) {
     ssa.start('fake', [], function (err) {
       setTimeout(function(){
