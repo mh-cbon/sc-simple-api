@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Sc-simple-api by mh-cbon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Sc-simple-api</h1>
+      <h2 class="project-tagline"> Simple api for node to manage services via windows sc/NSSM</h2>
+      <a href="https://github.com/mh-cbon/sc-simple-api" class="btn">View on GitHub</a>
+      <a href="https://github.com/mh-cbon/sc-simple-api/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/mh-cbon/sc-simple-api/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="sc-simple-api" class="anchor" href="#sc-simple-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>sc-simple-api</h1>
+
+<p>A simple API to manage windows services via SC / NSSM.</p>
+
+<h1>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install</h1>
+
+<div class="highlight highlight-source-shell"><pre>npm i @mh-cbon/sc-simple-api</pre></div>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> SimpleScApi <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>@mh-cbon/simple-sc-api<span class="pl-pds">'</span></span>)
+
+<span class="pl-k">var</span> ssa <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">SimpleScApi</span>()
+
+<span class="pl-c">// sc queryEx type= service</span>
+<span class="pl-smi">ssa</span>.<span class="pl-en">list</span>({type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>service<span class="pl-pds">"</span></span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">items</span>) {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(items)
+})
+
+<span class="pl-c">// sc qdescribe serviceId</span>
+<span class="pl-smi">ssa</span>.<span class="pl-en">qdescribe</span>(<span class="pl-s"><span class="pl-pds">"</span>serviceId<span class="pl-pds">"</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">info</span>) {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(info)
+})
+
+<span class="pl-c">// sc qdescribe serviceId + sc queryEx</span>
+<span class="pl-smi">ssa</span>.<span class="pl-en">describe</span>(<span class="pl-s"><span class="pl-pds">"</span>serviceId<span class="pl-pds">"</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">info</span>) {
+  <span class="pl-en">console</span>.<span class="pl-c1">log</span>(info)
+})
+
+<span class="pl-c">// sc config fake type= service</span>
+<span class="pl-smi">ssa</span>.<span class="pl-en">config</span>(<span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>, {type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>service<span class="pl-pds">"</span></span>}, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">error</span>(err);
+})
+
+<span class="pl-c">// sc create failure type= share displayname= "My fake service" \</span>
+<span class="pl-c">// binpath= "C:\\nodejsx64\\node.exe C:\\vagrant\\utils\\fake-service.js"</span>
+<span class="pl-k">var</span> service <span class="pl-k">=</span> {
+  id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>failure<span class="pl-pds">'</span></span>,
+  type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>share<span class="pl-pds">'</span></span>,
+  displayname<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>My fake service<span class="pl-pds">'</span></span>,
+  binpath<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>C:<span class="pl-cce">\\</span>nodejsx64<span class="pl-cce">\\</span>node.exe C:<span class="pl-cce">\\</span>vagrant<span class="pl-cce">\\</span>utils<span class="pl-cce">\\</span>fake-service.js<span class="pl-pds">'</span></span>
+}
+<span class="pl-smi">ssa</span>.<span class="pl-en">install</span>(service, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">error</span>(err);
+})
+
+<span class="pl-c">// nssm.exe serviceId C:\\nodejsx64\\node.exe C:\\vagrant\\utils\\fake-service.js</span>
+<span class="pl-smi">ssa</span>.<span class="pl-en">nssmInstall</span>(<span class="pl-s"><span class="pl-pds">'</span>serviceId<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>C:<span class="pl-cce">\\</span>nodejsx64<span class="pl-cce">\\</span>node.exe<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>C:<span class="pl-cce">\\</span>vagrant<span class="pl-cce">\\</span>utils<span class="pl-cce">\\</span>fake-service.js<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">error</span>(err);
+})
+
+<span class="pl-c">// sc start fake some= args</span>
+<span class="pl-smi">ssa</span>.<span class="pl-c1">start</span>(<span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>, [<span class="pl-s"><span class="pl-pds">"</span>some=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>args<span class="pl-pds">"</span></span>], <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">error</span>(err);
+})
+
+<span class="pl-c">// sc stop fake + sc start fake some= args</span>
+<span class="pl-smi">ssa</span>.<span class="pl-en">restart</span>(<span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>, [<span class="pl-s"><span class="pl-pds">"</span>some=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>args<span class="pl-pds">"</span></span>], <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">error</span>(err);
+})
+
+<span class="pl-c">// sc stop fake</span>
+<span class="pl-smi">ssa</span>.<span class="pl-c1">stop</span>(<span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">error</span>(err);
+})
+
+<span class="pl-c">// sc delete fake</span>
+<span class="pl-smi">ssa</span>.<span class="pl-en">uninstall</span>(<span class="pl-s"><span class="pl-pds">'</span>fake<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>) {
+  err <span class="pl-k">&amp;&amp;</span> <span class="pl-en">console</span>.<span class="pl-c1">error</span>(err);
+})</pre></div>
+
+<h1>
+<a id="testing" class="anchor" href="#testing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing</h1>
+
+<p>To run the <strong>windows</strong> tests on a fedora-like box,</p>
+
+<ul>
+<li>download and install <a href="https://www.vagrantup.com/downloads.html">vagrant from their website</a>, do not use distrib package. WinRM is somehow broken at that day.</li>
+<li>install <a href="https://github.com/criteo/vagrant-winrm">winrm plugin</a>: <code>vagrant plugin install vagrant-winrm</code>
+</li>
+<li>execute <code>npm run test-windows</code>
+</li>
+<li>wait, a looooooonnnnggggg time. Windows images are very big....</li>
+</ul>
+
+<h1>
+<a id="read-more" class="anchor" href="#read-more" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Read more</h1>
+
+<ul>
+<li><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms685996%28v=vs.85%29.aspx">https://msdn.microsoft.com/en-us/library/windows/desktop/ms685996%28v=vs.85%29.aspx</a></li>
+<li><a href="https://msdn.microsoft.com/fr-fr/library/windows/desktop/ee126211%28v=vs.85%29.aspx">https://msdn.microsoft.com/fr-fr/library/windows/desktop/ee126211%28v=vs.85%29.aspx</a></li>
+<li><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms685138%28v=vs.85%29.aspx">https://msdn.microsoft.com/en-us/library/windows/desktop/ms685138%28v=vs.85%29.aspx</a></li>
+<li><a href="http://nssm.cc/commands">http://nssm.cc/commands</a></li>
+<li><a href="https://technet.microsoft.com/en-us/library/cc742126.aspx">https://technet.microsoft.com/en-us/library/cc742126.aspx</a></li>
+</ul>
+
+<h1>
+<a id="notes" class="anchor" href="#notes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>notes</h1>
+
+<p>If you start to experience weirds behaviors, reboot your windows. As an example, see <a href="http://stackoverflow.com/questions/20561990/how-to-solve-the-specified-service-has-been-marked-for-deletion-error">this</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/mh-cbon/sc-simple-api">Sc-simple-api</a> is maintained by <a href="https://github.com/mh-cbon">mh-cbon</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
