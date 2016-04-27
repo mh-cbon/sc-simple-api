@@ -5,7 +5,7 @@ A simple API to manage windows services via SC / NSSM.
 # Install
 
 ```sh
-npm i @mh-cbon/sc-simple-api
+npm i @mh-cbon/sc-simple-api --save
 ```
 
 # Usage
