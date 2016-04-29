@@ -11,7 +11,7 @@ npm i @mh-cbon/sc-simple-api --save
 # Usage
 
 ```js
-var SimpleScApi = require('@mh-cbon/simple-sc-api')
+var SimpleScApi = require('@mh-cbon/sc-simple-api')
 
 var ssa = new SimpleScApi()
 
