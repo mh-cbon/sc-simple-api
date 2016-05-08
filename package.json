@@ -23,6 +23,7 @@
   "author": "mh-cbon <mh-cbon@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
+    "@mh-cbon/c-aghfabsowecwn": "^1.0.2",
     "@mh-cbon/nssm-prebuilt": "0.0.2",
     "split": "^1.0.0",
     "through2": "^2.0.1"

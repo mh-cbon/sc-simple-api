@@ -2,8 +2,10 @@ var should      = require('should');
 var fs          = require('fs');
 var SimpleScApi = require('../index.js');
 
-describe('launchd-simple-api userland', function() {
+describe('s-simple-api functional', function() {
   var ssa = new SimpleScApi()
+
+  if ('elevate' in process.env) ssa.enableElevation(true)
 
   it('should not list the fake service', function(done) {
     ssa.list({}, function (err, list) {

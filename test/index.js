@@ -7,9 +7,14 @@ var SimpleScApi = require('../index.js');
 
 describe('simple sc api', function() {
   var ssa = new SimpleScApi()
+
+  this.timeout(5000);
+
+  if ('elevate' in process.env) ssa.enableElevation(true)
+
   it('should list services', function(done) {
     ssa.list({}, function (err, items) {
-      (err===null).should.eql(true);
+      (!err).should.eql(true);
       ('WinRM' in items).should.eql(true);
       items['WinRM'].name.should.eql("WinRM")
       items['WinRM'].checkpoint.should.eql("0x0")
@@ -21,28 +26,28 @@ describe('simple sc api', function() {
   });
   it('should properly fail to list services', function(done) {
     ssa.list({type: "NOT CORRECT"}, function (err, items) {
-      (err===null).should.eql(false);
+      (!err).should.eql(false);
       err.should.match(/ERROR:/)
       done();
     })
   });
   it('should qdescribe a service', function(done) {
     ssa.qdescribe('WinRM', function (err, description) {
-      (err===null).should.eql(true);
+      (!err).should.eql(true);
       description.should.match(/Windows Remote Management/)
       done();
     })
   });
   it('should properly fail to qdescribe a service', function(done) {
     ssa.qdescribe('wxcxwcxwc', function (err, description) {
-      (err===null).should.eql(false);
+      (!err).should.eql(false);
       err.should.match(/does not exist/)
       done();
     })
   });
   it('should describe a service', function(done) {
     ssa.describe('WinRM', function (err, description) {
-      (err===null).should.eql(true);
+      (!err).should.eql(true);
       description.checkpoint.should.eql("0x0")
       description.controls.should.eql([ 'STOPPABLE', ' NOT_PAUSABLE', ' ACCEPTS_SHUTDOWN' ])
       description.description.should.eql('Windows Remote Management (WinRM) service implements the '
@@ -66,7 +71,7 @@ describe('simple sc api', function() {
   });
   it('should properly fail to describe a service', function(done) {
     ssa.describe('wxcxwcxwc', function (err, description) {
-      (err===null).should.eql(false);
+      (!err).should.eql(false);
       err.should.match(/not found/)
       done();
     })
@@ -80,7 +85,7 @@ describe('simple sc api', function() {
       binpath: 'C:\\nodejsx64\\node.exe C:\\vagrant\\utils\\fake-service.js'
     }
     ssa.install(service, function (err) {
-      (err===null).should.eql(true);
+      (!err).should.eql(true);
       err && console.error(err);
       done();
     })
@@ -92,7 +97,7 @@ describe('simple sc api', function() {
       binpath: 'C:\\nodejsx64\\node.exe C:\\vagrant\\utils\\fake-service.js'
     }
     ssa.install(service, function (err) {
-      (err===null).should.eql(false);
+      (!err).should.eql(false);
       err.should.match(/The specified service already exists/);
       done();
     })
@@ -100,14 +105,14 @@ describe('simple sc api', function() {
 
   it('should install a service with nssm', function(done) {
     ssa.nssmInstall('fake', 'C:\\nodejsx64\\node.exe', 'C:\\vagrant\\utils\\fake-service.js', function (err) {
-      (err===null).should.eql(true);
+      (!err).should.eql(true);
       err && console.error(err);
       done();
     })
   });
   it('should properly fail to install a service with nssm', function(done) {
     ssa.nssmInstall('', '', '', function (err) {
-      (err===null).should.eql(false);
+      (!err).should.eql(false);
       err && console.error(err);
       done();
     })
@@ -116,7 +121,7 @@ describe('simple sc api', function() {
 
   it('should start a service', function(done) {
     ssa.start('fake', [], function (err) {
-      (err===null).should.eql(true);
+      (!err).should.eql(true);
       err && console.error(err);
       setTimeout(done, 1500)
     })
@@ -124,7 +129,7 @@ describe('simple sc api', function() {
 
   it('should properly fail to start a service', function(done) {
     ssa.start('failure', [], function (err) {
-      (err===null).should.eql(false);
+      (!err).should.eql(false);
       err && console.error(err);
       done();
     })
@@ -133,7 +138,7 @@ describe('simple sc api', function() {
 
   it('should stop a service', function(done) {
     ssa.stop('fake', function (err) {
-      (err===null).should.eql(true);
+      (!err).should.eql(true);
       err && console.error(err);
       done();
     })
@@ -141,7 +146,7 @@ describe('simple sc api', function() {
 
   it('should properly fail to stop a service', function(done) {
     ssa.stop('failure', function (err) {
-      (err===null).should.eql(false);
+      (!err).should.eql(false);
       err && console.error(err);
       done();
     })
@@ -152,7 +157,7 @@ describe('simple sc api', function() {
       id: 'failure',
     }
     ssa.uninstall(service, function (err) {
-      (err===null).should.eql(true);
+      (!err).should.eql(true);
       err && console.error(err);
       done();
     })
@@ -162,7 +167,7 @@ describe('simple sc api', function() {
       id: 'fake',
     }
     ssa.uninstall(service, function (err) {
-      (err===null).should.eql(true);
+      (!err).should.eql(true);
       err && console.error(err);
       done();
     })
@@ -172,7 +177,7 @@ describe('simple sc api', function() {
       id: 'wxcwxc',
     }
     ssa.uninstall(service, function (err) {
-      (err===null).should.eql(false);
+      (!err).should.eql(false);
       err.should.match(/FAILED/);
       done();
     })

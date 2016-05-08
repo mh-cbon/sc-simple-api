@@ -1,4 +1,5 @@
 var spawn     = require('child_process').spawn;
+var eSpawn    = require('@mh-cbon/aghfabsowecwn').spawn;
 var path      = require('path')
 var split     = require('split')
 var through2  = require('through2')
@@ -6,6 +7,18 @@ var spScQuery = require('./sp-scquery.js');
 var nssm      = require("@mh-cbon/nssm-prebuilt")
 
 function SimpleScApi (version) {
+
+  var elevationEnabled = false;
+  this.enableElevation = function (e) {
+    elevationEnabled = !!e;
+  }
+
+  var spawnAChild = function (bin, args, opts) {
+    if (elevationEnabled) {
+      return eSpawn(bin, args, opts);
+    }
+    return spawn(bin, args, opts);
+  }
 
   var scPath = 'sc'
   this.setScPath = function (k) {
@@ -23,7 +36,7 @@ function SimpleScApi (version) {
     if (opts.group) args = args.concat(["group=", opts.group])
     // ri and bufSize are ignored.
 
-    var c = spawn(scPath, args, {stdio: 'pipe'})
+    var c = spawnAChild(scPath, args, {stdio: 'pipe'})
 
     var s = spScQuery();
     s.on('error', function (err){
@@ -51,7 +64,7 @@ function SimpleScApi (version) {
     var description = "";
     var args = ['qdescription', serviceId]
 
-    var c = spawn(scPath, args, {stdio: 'pipe'})
+    var c = spawnAChild(scPath, args, {stdio: 'pipe'})
 
     var hasFailed = false
     var failure = ""
@@ -115,7 +128,7 @@ function SimpleScApi (version) {
     if (opts.displayname) args = args.concat(["displayname=", opts.displayname])
     if (opts.password) args = args.concat(["password=", opts.password])
 
-    var c = spawn(scPath, args, {stdio: 'pipe'})
+    var c = spawnAChild(scPath, args, {stdio: 'pipe'})
 
     var data = '';
     var hasFailed = false;
@@ -141,7 +154,7 @@ function SimpleScApi (version) {
   this.start = function (serviceId, args, then) {
     var args = ['start', serviceId].concat(args)
 
-    var c = spawn(scPath, args, {stdio: 'pipe'})
+    var c = spawnAChild(scPath, args, {stdio: 'pipe'})
 
     c.on('close', function (code) {
       then(code>0 ? 'got error' : null)
@@ -154,7 +167,7 @@ function SimpleScApi (version) {
   this.stop = function (serviceId, then) {
     var args = ['stop', serviceId]
 
-    var c = spawn(scPath, args, {stdio: 'pipe'})
+    var c = spawnAChild(scPath, args, {stdio: 'pipe'})
 
     c.stdout.pipe(process.stdout);
     c.stderr.pipe(process.stderr);
@@ -179,7 +192,7 @@ function SimpleScApi (version) {
 
     var args = ['install', serviceId, binPath, strArgs]
 
-    var c = spawn(nssm.path, args, {stdio: 'pipe'})
+    var c = spawnAChild(nssm.path, args, {stdio: 'pipe'})
 
     var hasFailed = false;
 
@@ -227,7 +240,7 @@ function SimpleScApi (version) {
     if (opts.displayname) args = args.concat(["displayname=", opts.displayname])
     if (opts.password) args = args.concat(["password=", opts.password])
 
-    var c = spawn(scPath, args, {stdio: 'pipe'})
+    var c = spawnAChild(scPath, args, {stdio: 'pipe'})
 
     var data = '';
     var hasFailed = false;
@@ -253,7 +266,7 @@ function SimpleScApi (version) {
   this.uninstall = function (opts, then) {
     var args = ['delete', opts.id]
 
-    var c = spawn(scPath, args, {stdio: 'pipe'})
+    var c = spawnAChild(scPath, args, {stdio: 'pipe'})
 
     var data = '';
     var hasFailed = false;
