@@ -16,7 +16,7 @@ describe('s-simple-api functional', function() {
 
   it('should install a fake service', function(done) {
     ssa.nssmInstall('fake', 'C:\\nodejsx64\\node.exe', 'C:\\vagrant\\utils\\fake-service.js', function (err) {
-      (err===null).should.eql(true);
+      (!err).should.eql(true);
       err && console.error(err);
       done();
     })
