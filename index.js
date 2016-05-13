@@ -197,8 +197,8 @@ function SimpleScApi (version) {
     if(opts.author) cmd += ':: ' + opts.author.replace(/\n/g, '\n::') + '\r\n'
     if(opts.wd) cmd += 'cd ' + opts.wd + '\r\n'
 
-    opts.env && Object.keys(opts.env).forEach(function (name) {
-      var v = opts.env[name];
+    env && Object.keys(env).forEach(function (name) {
+      var v = env[name];
       cmd += 'set ' + name + '=' + (v.match(/\s/) ? '"' + v.replace(/"/g, '\"') + '"' : v) + '\r\n'
     })
 
