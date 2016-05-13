@@ -192,22 +192,23 @@ function SimpleScApi (version) {
   this.generateCmdFile = function (bin, args, env, opts) {
     var cmd = '';
 
-    cmd += ':: ' + opts.name + '\n'
-    if(opts.description) cmd += ':: ' + opts.description.replace(/\n/g, '\n::') + '\r\n'
-    if(opts.author) cmd += ':: ' + opts.author.replace(/\n/g, '\n::') + '\r\n'
-    if(opts.wd) cmd += 'cd ' + opts.wd + '\r\n'
+    cmd += ':: ' + opts.name.toString() + '\n'
+    if(opts.description) cmd += ':: ' + opts.description.toString().replace(/\n/g, '\n::') + '\r\n'
+    if(opts.author) cmd += ':: ' + opts.author.toString().replace(/\n/g, '\n::') + '\r\n'
+    if(opts.wd) cmd += 'cd ' + opts.wd.toString() + '\r\n'
 
     env && Object.keys(env).forEach(function (name) {
-      var v = env[name];
+      var v = env[name].toString();
       cmd += 'set ' + name + '=' + (v.match(/\s/) ? '"' + v.replace(/"/g, '\"') + '"' : v) + '\r\n'
     })
 
     var exec = bin;
     args.forEach(function (arg) {
-      exec += ' ' + (arg.match(/\s/) ? '"' + arg.replace(/"/g, '\"') + '"' : arg) + " ";
+      var v = arg.toString()
+      exec += ' ' + (v.match(/\s/) ? '"' + v.replace(/"/g, '\"') + '"' : arg) + " ";
     });
-    if (opts.stdout) exec += ' >> ' + opts.stdout;
-    if (opts.stderr) exec += ' 2>> ' + opts.stderr;
+    if (opts.stdout) exec += ' >> ' + opts.stdout.toString();
+    if (opts.stderr) exec += ' 2>> ' + opts.stderr.toString();
     cmd += exec + '\r\n'
 
     return cmd;
