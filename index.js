@@ -5,6 +5,7 @@ var split     = require('split')
 var through2  = require('through2')
 var spScQuery = require('./sp-scquery.js');
 var nssm      = require("@mh-cbon/nssm-prebuilt")
+var sudoFs    = require('@mh-cbon/sudo-fs');
 
 function SimpleScApi (version) {
 
@@ -188,6 +189,37 @@ function SimpleScApi (version) {
     })
   }
 
+  this.generateCmdFile = function (bin, args, env, opts) {
+    var cmd = '';
+
+    cmd += ':: ' + opts.name + '\n'
+    if(opts.description) cmd += ':: ' + opts.description.replace(/\n/g, '\n::') + '\r\n'
+    if(opts.author) cmd += ':: ' + opts.author.replace(/\n/g, '\n::') + '\r\n'
+    if(opts.wd) cmd += 'cd ' + opts.wd + '\r\n'
+
+    opts.env && Object.keys(opts.env).forEach(function (name) {
+      var v = opts.env[name];
+      cmd += 'set ' + name + '=' + (v.match(/\s/) ? '"' + v.replace(/"/g, '\"') + '"' : v) + '\r\n'
+    })
+
+    var exec = bin;
+    args.forEach(function (arg) {
+      exec += ' ' + (arg.match(/\s/) ? '"' + arg.replace(/"/g, '\"') + '"' : arg) + " ";
+    });
+    if (opts.stdout) exec += ' >> ' + opts.stdout;
+    if (opts.stderr) exec += ' 2>> ' + opts.stderr;
+    cmd += exec + '\r\n'
+
+    return cmd;
+  }
+
+  this.writeFile = function (filePath, content, then) {
+    sudoFs.mkdir(path.dirname(filePath), function (err) {
+      if (err) return then(err);
+      sudoFs.writeFile(filePath, content, then)
+    });
+  }
+
   this.nssmInstall = function (serviceId, binPath, strArgs, then) {
 
     var args = ['install', serviceId, binPath, strArgs]
@@ -214,6 +246,39 @@ function SimpleScApi (version) {
       // so lets get ride of those NUL values
       stderr = stderr.replace(/\u0000/g, '')
       if (stderr.match(/Error\s+creating/i)) {
+        hasFailed = true
+      }
+      then(hasFailed ? stderr : null)
+    });
+
+    c.on('error', then);
+
+    return c;
+  }
+
+  this.nssmSet = function (serviceId, param, val, then) {
+
+    var args = ['set', serviceId, param, val]
+
+    var c = spawnAChild(nssm.path, args, {stdio: 'pipe'})
+
+    var hasFailed = false;
+
+    var stdout = '';
+    c.stdout.on('data', function (d) {
+      stdout += d.toString() + ' ';
+    })
+    var stderr = '';
+    c.stderr.on('data', function (d) {
+      stderr += d.toString() + ' ';
+    })
+
+    c.on('close', function (code) {
+      // small subtility, stderr will print like this
+      // E\u0000r\u0000r\u0000o\u0000r\u0000 \u0000c\u0000r\u0000e\u0000
+      // so lets get ride of those NUL values
+      stderr = stderr.replace(/\u0000/g, '')
+      if (stderr.match(/Error\s/i)) {
         hasFailed = true
       }
       then(hasFailed ? stderr : null)
