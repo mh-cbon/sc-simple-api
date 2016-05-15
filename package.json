@@ -24,8 +24,9 @@
   "license": "MIT",
   "dependencies": {
     "@mh-cbon/c-aghfabsowecwn": "^1.0.2",
-    "@mh-cbon/nssm-prebuilt": "0.0.2",
-    "@mh-cbon/sudo-fs": "^1.0.3",
+    "@mh-cbon/nssm-prebuilt": "^0.0.3",
+    "@mh-cbon/sudo-fs": "^1.0.11",
+    "should": "^8.3.1",
     "split": "^1.0.0",
     "through2": "^2.0.1"
   },
