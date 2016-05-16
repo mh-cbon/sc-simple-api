@@ -144,7 +144,7 @@ function SimpleScApi (version) {
     });
 
     c.on('close', function (code) {
-      then(hasFailed ? data : null)
+      then && then(hasFailed ? data : null)
     });
 
     then && c.on('error', then);
@@ -158,7 +158,7 @@ function SimpleScApi (version) {
     var c = spawnAChild(scPath, args, {stdio: 'pipe'})
 
     c.on('close', function (code) {
-      then(code>0 ? 'got error' : null)
+      then && then(code>0 ? 'got error' : null)
     });
 
     then && c.on('error', then);
@@ -174,7 +174,7 @@ function SimpleScApi (version) {
     c.stderr.pipe(process.stderr);
 
     c.on('close', function (code) {
-      then(code>0 ? 'got error' : null)
+      then && then(code>0 ? 'got error' : null)
     });
 
     then && c.on('error', then);
