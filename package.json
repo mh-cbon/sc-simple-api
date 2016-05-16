@@ -1,6 +1,6 @@
 {
   "name": "@mh-cbon/sc-simple-api",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Simple api for node to manage services via windows sc",
   "main": "index.js",
   "scripts": {
