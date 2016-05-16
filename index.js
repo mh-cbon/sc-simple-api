@@ -56,7 +56,7 @@ function SimpleScApi (version) {
       then && then(null, services)
     }).resume())
 
-    c.on('error', then);
+    then && c.on('error', then);
 
     return c;
   }
@@ -93,7 +93,7 @@ function SimpleScApi (version) {
       then(null, description)
     }).resume())
 
-    c.on('error', then);
+    then && c.on('error', then);
 
     return c;
   }
@@ -147,7 +147,7 @@ function SimpleScApi (version) {
       then(hasFailed ? data : null)
     });
 
-    c.on('error', then);
+    then && c.on('error', then);
 
     return c;
   }
@@ -161,7 +161,7 @@ function SimpleScApi (version) {
       then(code>0 ? 'got error' : null)
     });
 
-    c.on('error', then);
+    then && c.on('error', then);
 
     return c;
   }
@@ -177,7 +177,7 @@ function SimpleScApi (version) {
       then(code>0 ? 'got error' : null)
     });
 
-    c.on('error', then);
+    then && c.on('error', then);
 
     return c;
   }
@@ -249,10 +249,10 @@ function SimpleScApi (version) {
       if (stderr.match(/Error\s+creating/i)) {
         hasFailed = true
       }
-      then(hasFailed ? stderr : null)
+      then && then(hasFailed ? stderr : null)
     });
 
-    c.on('error', then);
+    then && c.on('error', then);
 
     return c;
   }
@@ -282,10 +282,10 @@ function SimpleScApi (version) {
       if (stderr.match(/Error\s/i)) {
         hasFailed = true
       }
-      then(hasFailed ? stderr : null)
+      then && then(hasFailed ? stderr : null)
     });
 
-    c.on('error', then);
+    then && c.on('error', then);
 
     return c;
   }
@@ -321,10 +321,10 @@ function SimpleScApi (version) {
     });
 
     c.on('close', function (code) {
-      then(hasFailed ? data : null)
+      then && then(hasFailed ? data : null)
     });
 
-    c.on('error', then);
+    then && c.on('error', then);
 
     return c;
   }
@@ -347,10 +347,10 @@ function SimpleScApi (version) {
     })
 
     c.on('close', function (code) {
-      then(hasFailed ? data : null)
+      then && then(hasFailed ? data : null)
     });
 
-    c.on('error', then);
+    then && c.on('error', then);
 
     c.stdout.pipe(process.stdout);
     c.stderr.pipe(process.stderr);
