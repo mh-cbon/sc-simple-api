@@ -155,10 +155,18 @@ function SimpleScApi (version) {
   this.start = function (serviceId, args, then) {
     var args = ['start', serviceId].concat(args)
 
-    var c = spawnAChild(scPath, args, {stdio: 'pipe'})
+    var c = spawnAChild(scPath, args, {stdio: 'pipe'});
+    var stdout = '';
+    var stderr = '';
+    c.stdout.on('data', function (d) {
+      stdout += d.toString();
+    })
+    c.stderr.on('data', function (d) {
+      stderr += d.toString();
+    })
 
     c.on('close', function (code) {
-      then && then(code>0 ? 'got error' : null)
+      then && then(code!==0 ? 'got error ' + code + '\n'+stdout+'\n'+stderr : null)
     });
 
     then && c.on('error', then);
@@ -169,12 +177,17 @@ function SimpleScApi (version) {
     var args = ['stop', serviceId]
 
     var c = spawnAChild(scPath, args, {stdio: 'pipe'})
-
-    c.stdout.pipe(process.stdout);
-    c.stderr.pipe(process.stderr);
+    var stdout = '';
+    var stderr = '';
+    c.stdout.on('data', function (d) {
+      stdout += d.toString();
+    })
+    c.stderr.on('data', function (d) {
+      stderr += d.toString();
+    })
 
     c.on('close', function (code) {
-      then && then(code>0 ? 'got error' : null)
+      then && then(code!==0 ? 'got error ' + code + '\n'+stdout+'\n'+stderr : null)
     });
 
     then && c.on('error', then);
@@ -345,9 +358,13 @@ function SimpleScApi (version) {
       }
       data += d
     })
+    var stderr = '';
+    c.stderr.on('data', function (d) {
+      stderr += d.toString();
+    })
 
     c.on('close', function (code) {
-      then && then(hasFailed ? data : null)
+      then && then(hasFailed ? data + '\n' + stderr : null)
     });
 
     then && c.on('error', then);
