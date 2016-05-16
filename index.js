@@ -198,7 +198,12 @@ function SimpleScApi (version) {
     var that = this;
     return that.stop(serviceId, function (err) {
       if (err) return then(err);
-      that.start(serviceId, args, then)
+      //@todo this should look for the PID
+      // to disapear from the process tree,
+      // instead of waiting for 2.5s....
+      setTimeout(function (){
+        that.start(serviceId, args, then)
+      }, 2500)
     })
   }
 
