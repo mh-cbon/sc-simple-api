@@ -131,7 +131,7 @@ function SimpleScApi (version) {
 
     var c = spawnAChild(scPath, args, {stdio: 'pipe'})
 
-    var data = '';
+    var stdout = '';
     var hasFailed = false;
     c.stdout.on('data', function (d) {
       d = d.toString();
@@ -140,11 +140,16 @@ function SimpleScApi (version) {
       } else if (!hasFailed && d.match(/ERROR:/)) {
         hasFailed = true
       }
-      data += d
+      stdout += d
     });
+    var stderr = '';
+    c.stderr.on('data', function (d) {
+      stderr += d.toString();
+    })
 
     c.on('close', function (code) {
-      then && then(hasFailed ? data : null)
+      if(code!==0) return then && then('code=' + code + '\n' + stderr + '\n' + stdout)
+      return then && then(hasFailed ? 'code=' + code + '\n' + stderr + '\n' + stdout : null)
     });
 
     then && c.on('error', then);
@@ -157,16 +162,16 @@ function SimpleScApi (version) {
 
     var c = spawnAChild(scPath, args, {stdio: 'pipe'});
     var stdout = '';
-    var stderr = '';
     c.stdout.on('data', function (d) {
       stdout += d.toString();
     })
+    var stderr = '';
     c.stderr.on('data', function (d) {
       stderr += d.toString();
     })
 
     c.on('close', function (code) {
-      then && then(code!==0 ? 'got error ' + code + '\n'+stdout+'\n'+stderr : null)
+      then && then(code!==0 ? 'code=' + code + '\n'+stdout+'\n'+stderr : null)
     });
 
     then && c.on('error', then);
@@ -187,7 +192,7 @@ function SimpleScApi (version) {
     })
 
     c.on('close', function (code) {
-      then && then(code!==0 ? 'got error ' + code + '\n'+stdout+'\n'+stderr : null)
+      then && then(code!==0 ? 'code=' + code + '\n'+stdout+'\n'+stderr : null)
     });
 
     then && c.on('error', then);
@@ -267,7 +272,8 @@ function SimpleScApi (version) {
       if (stderr.match(/Error\s+creating/i)) {
         hasFailed = true
       }
-      then && then(hasFailed ? stderr : null)
+      if(code!==0) return then && then('code=' + code + '\n' + stderr + '\n' + stdout)
+      return then && then(hasFailed ? 'code=' + code + '\n' + stderr + '\n' + stdout : null)
     });
 
     then && c.on('error', then);
@@ -300,7 +306,8 @@ function SimpleScApi (version) {
       if (stderr.match(/Error\s/i)) {
         hasFailed = true
       }
-      then && then(hasFailed ? stderr : null)
+      if(code!==0) return then && then('code=' + code + '\n' + stderr + '\n' + stdout)
+      return then && then(hasFailed ? 'code=' + code + '\n' + stderr + '\n' + stdout : null)
     });
 
     then && c.on('error', then);
@@ -326,7 +333,7 @@ function SimpleScApi (version) {
 
     var c = spawnAChild(scPath, args, {stdio: 'pipe'})
 
-    var data = '';
+    var stdout = '';
     var hasFailed = false;
     c.stdout.on('data', function (d) {
       d = d.toString();
@@ -335,11 +342,16 @@ function SimpleScApi (version) {
       } else if (!hasFailed && d.match(/FAILED\s+[0-9]+/)) {
         hasFailed = true
       }
-      data += d
+      stdout += d
     });
+    var stderr = '';
+    c.stderr.on('data', function (d) {
+      stderr += d.toString() + ' ';
+    })
 
     c.on('close', function (code) {
-      then && then(hasFailed ? data : null)
+      if(code!==0) return then && then('code=' + code + '\n' + stderr+ '\n' +stdout)
+      return then && then(hasFailed ? 'code=' + code + '\n' + stderr+ '\n' +stdout : null)
     });
 
     then && c.on('error', then);
@@ -352,7 +364,7 @@ function SimpleScApi (version) {
 
     var c = spawnAChild(scPath, args, {stdio: 'pipe'})
 
-    var data = '';
+    var stdout = '';
     var hasFailed = false;
     c.stdout.on('data', function (d) {
       d = d.toString();
@@ -361,7 +373,7 @@ function SimpleScApi (version) {
       } else if (!hasFailed && d.match(/FAILED\s+[0-9]+/)) {
         hasFailed = true
       }
-      data += d
+      stdout += d
     })
     var stderr = '';
     c.stderr.on('data', function (d) {
@@ -369,7 +381,8 @@ function SimpleScApi (version) {
     })
 
     c.on('close', function (code) {
-      then && then(hasFailed ? data + '\n' + stderr : null)
+      if(code!==0) return then && then('code=' + code + '\n' + stderr+ '\n' +stdout)
+      return then && then(hasFailed ? 'code=' + code + '\n' + stderr+ '\n' +stdout : null)
     });
 
     then && c.on('error', then);

@@ -7,3 +7,9 @@ call msiexec.exe /i C:\node-v5.9.1-x64.msi INSTALLDIR="C:\nodejsx64" /quiet
 call C:\nodejsx64\node.exe -v
 :: install mocha
 call C:\nodejsx64\npm.cmd i mocha -g
+:: move to the working directory
+cd C:\vagrant\
+:: clean up
+call rmdir /s /q node_modules
+:: install the package dependencies
+call C:\nodejsx64\npm.cmd i
